@@ -49,9 +49,7 @@ builder.Services.AddApiVersioning();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 // Add DB Contexts
-// Move the connection string to user secrets for release
-builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-    opt.UseNpgsql("Host=localhost;Database=postgres;Username=postgres;Password=devpass"));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("DataSource=app.db"));
 
 // Register our TokenService dependency
 builder.Services.AddScoped<TokenService, TokenService>();
@@ -83,7 +81,6 @@ builder.Services
 var validIssuer = builder.Configuration.GetValue<string>("JwtTokenSettings:ValidIssuer");
 var validAudience = builder.Configuration.GetValue<string>("JwtTokenSettings:ValidAudience");
 var symmetricSecurityKey = builder.Configuration.GetValue<string>("JwtTokenSettings:SymmetricSecurityKey");
-
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
