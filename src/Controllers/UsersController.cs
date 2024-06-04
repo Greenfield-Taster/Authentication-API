@@ -4,6 +4,7 @@ using JwtRoleAuthentication.Models;
 using JwtRoleAuthentication.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JwtRoleAuthentication.Controllers;
 
@@ -34,10 +35,10 @@ public class UsersController : ControllerBase
         }
 
         var result = await _userManager.CreateAsync(
-            new ApplicationUser { UserName = request.Username, Email = request.Email, Role = request.Role },
+            new ApplicationUser { UserName = request.Username, Email = request.Email, Role = request.Role, PhoneNumber = request.PhoneNumber },
             request.Password!
         );
-        
+
         if (result.Succeeded)
         {
             request.Password = "";
@@ -62,22 +63,22 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var managedUser = await _userManager.FindByEmailAsync(request.Email!);
-        
+        var managedUser = await _userManager.Users.SingleOrDefaultAsync(user => user.PhoneNumber == request.PhoneNumber);
+
         if (managedUser == null)
         {
             return BadRequest("Bad credentials");
         }
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password!);
-        
+
         if (!isPasswordValid)
         {
             return BadRequest("Bad credentials");
         }
 
-        var userInDb = _context.Users.FirstOrDefault(u => u.Email == request.Email);
-        
+        var userInDb = _context.Users.FirstOrDefault(user => user.PhoneNumber == request.PhoneNumber);
+
         if (userInDb is null)
         {
             return Unauthorized();
@@ -90,6 +91,7 @@ public class UsersController : ControllerBase
         {
             Username = userInDb.UserName,
             Email = userInDb.Email,
+            PhoneNumber = userInDb.PhoneNumber,
             Token = accessToken,
         });
     }
