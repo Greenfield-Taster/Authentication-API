@@ -36,6 +36,13 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
 
+        // Check if the phone number already exists
+        var userWithSamePhoneNumber = await _context.Users.FirstOrDefaultAsync(user => user.PhoneNumber == request.PhoneNumber);
+        if (userWithSamePhoneNumber != null)
+        {
+            return BadRequest(new { message = "A user with this phone number already exists." });
+        }
+
         var result = await _userManager.CreateAsync(
             new ApplicationUser { UserName = request.Username, Email = request.Email, Role = request.Role, PhoneNumber = request.PhoneNumber },
             request.Password!
@@ -46,7 +53,7 @@ public class UsersController : ControllerBase
             request.Password = "";
             return CreatedAtAction(nameof(Register), new { email = request.Email, role = Role.User }, request);
         }
-
+        
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(error.Code, error.Description);
