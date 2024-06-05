@@ -2,6 +2,7 @@ using JwtRoleAuthentication.Data;
 using JwtRoleAuthentication.Enums;
 using JwtRoleAuthentication.Models;
 using JwtRoleAuthentication.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace JwtRoleAuthentication.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
+[EnableCors("AllowSpecificOrigin")]
 public class UsersController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;

@@ -105,6 +105,17 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:3000") // Specify the origin to be allowed
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 // Build the app
 var app = builder.Build();
 
@@ -118,6 +129,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStatusCodePages();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
