@@ -111,7 +111,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("http://localhost:3000") // Specify the origin to be allowed
+            .WithOrigins("http://localhost:3000", "https://greenfield-taster.github.io") // Specify the origin to be allowed
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
